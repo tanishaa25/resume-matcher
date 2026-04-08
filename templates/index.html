@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Resume Matcher</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        h1 {
+            color: #4a4a4a;
+        }
+
+        textarea {
+            width: 90%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 25px;
+            border: none;
+            background: #667eea;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+
+        .upload-box {
+            margin-top: 20px;
+        }
+
+        .custom-file-upload {
+            display: inline-block;
+            padding: 20px;
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 80%;
+            background: #f9f9ff;
+            transition: 0.3s;
+        }
+
+        .custom-file-upload:hover {
+            background: #eef1ff;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        #file-name {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .result {
+            margin-top: 30px;
+        }
+
+        .score {
+            font-size: 26px;
+            font-weight: bold;
+            color: #2b6cb0;
+        }
+
+        .skills {
+            margin-top: 15px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 5px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .match {
+            background-color: #c6f6d5;
+            color: #22543d;
+        }
+
+        .missing {
+            background-color: #fed7d7;
+            color: #742a2a;
+        }
+
+        img {
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>💼 AI Resume Matcher</h1>
+
+    <form action="/match" method="post" enctype="multipart/form-data">
+
+        <h3>Upload Resume (PDF)</h3>
+
+        <div class="upload-box">
+            <label for="file-upload" class="custom-file-upload">
+                📄 Click or Drag & Drop Resume
+            </label>
+            <input id="file-upload" type="file" name="resume" required onchange="showFileName()">
+            <p id="file-name"></p>
+        </div>
+
+        <h3>Paste Job Description</h3>
+        <textarea name="jd" rows="6" placeholder="Enter job description..."></textarea>
+
+        <br>
+        <button type="submit">🚀 Analyze Resume</button>
+    </form>
+
+    {% if match %}
+    <div class="result">
+        <div class="score">Match Score: {{ match }}%</div>
+
+        <div class="skills">
+            <h3>✅ Matching Skills</h3>
+            {% for skill in match_skills %}
+                <span class="tag match">{{ skill }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="skills">
+            <h3>❌ Missing Skills</h3>
+            {% for skill in missing_skills %}
+                <span class="tag missing">{{ skill }}</span>
+            {% endfor %}
+        </div>
+
+        <h3>📊 Skill Analysis</h3>
+        <img src="{{ url_for('static', filename='graph.png') }}" width="400">
+
+        <br><br>
+        <a href="{{ url_for('static', filename='report.pdf') }}" download>
+            <button>📥 Download Report</button>
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function showFileName() {
+    const input = document.getElementById('file-upload');
+    const fileName = input.files[0]?.name || "No file selected";
+    document.getElementById('file-name').innerText = "Selected: " + fileName;
+}
+</script>
+
+</body>
+</html>
